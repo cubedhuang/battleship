@@ -15,16 +15,12 @@ export class ComputerPlayer extends Player {
 	attack(player: Player, _: Location) {
 		const location = this.getRandomLocation();
 
-		if (!player.hasShipAt(location)) {
-			this.guessBoard[location.row][location.col] = Guess.Miss;
+		const result = player.hit(location);
+		console.log(player.getHits());
 
-			return false;
-		}
-
-		const ship = player.getShip(location)!;
-		ship.hit(location);
-
-		this.guessBoard[location.row][location.col] = Guess.Hit;
+		this.guessBoard[location.row][location.col] = result
+			? Guess.Hit
+			: Guess.Miss;
 
 		return true;
 	}

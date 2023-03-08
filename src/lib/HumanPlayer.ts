@@ -4,16 +4,11 @@ import { Player } from './Player';
 
 export class HumanPlayer extends Player {
 	attack(player: Player, location: Location) {
-		if (!player.hasShipAt(location)) {
-			this.guessBoard[location.row][location.col] = Guess.Miss;
+		const result = player.hit(location);
 
-			return false;
-		}
-
-		const ship = player.getShip(location)!;
-		ship.hit(location);
-
-		this.guessBoard[location.row][location.col] = Guess.Hit;
+		this.guessBoard[location.row][location.col] = result
+			? Guess.Hit
+			: Guess.Miss;
 
 		return true;
 	}

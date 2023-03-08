@@ -49,10 +49,23 @@ export abstract class Player {
 
 	hit(location: Location) {
 		this.hits.push(location);
+
+		if (!this.hasShipAt(location)) {
+			this.guessBoard[location.row][location.col] = Guess.Miss;
+
+			return false;
+		}
+
+		const ship = this.getShip(location)!;
+		ship.hit(location);
+
+		this.guessBoard[location.row][location.col] = Guess.Hit;
+
+		return true;
 	}
 
-	hasHitAt(location: Location) {
-		return this.hits.some(loc => loc.equals(location));
+	wasHitAt(location: Location) {
+		return this.hits.some(hit => hit.equals(location));
 	}
 
 	getGuessBoard() {
