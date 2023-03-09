@@ -40,6 +40,10 @@ export class Ship {
 		return this.locations;
 	}
 
+	getName() {
+		return this.name;
+	}
+
 	isSunk() {
 		return this.hits.length === this.length;
 	}

@@ -7,7 +7,6 @@ import {
 	Destroyer,
 	Orientation,
 	PatrolBoat,
-	Ship,
 	Submarine
 } from './Ship';
 
@@ -16,13 +15,10 @@ export class ComputerPlayer extends Player {
 		const location = this.getRandomLocation();
 
 		const result = player.hit(location);
-		console.log(player.getHits());
 
 		this.guessBoard[location.row][location.col] = result
 			? Guess.Hit
 			: Guess.Miss;
-
-		return true;
 	}
 
 	private getRandomLocation() {
@@ -50,9 +46,9 @@ export class ComputerPlayer extends Player {
 	placeShips() {
 		const ships = [Carrier, Cruiser, Destroyer, PatrolBoat, Submarine];
 
-		for (const CurrentShip of ships) {
+		for (const Ship of ships) {
 			while (true) {
-				const ship = new CurrentShip(
+				const ship = new Ship(
 					this.getRandomLocation(),
 					Math.random() < 0.5
 						? Orientation.Horizontal
@@ -66,21 +62,5 @@ export class ComputerPlayer extends Player {
 				}
 			}
 		}
-	}
-
-	private canPlaceShip(ship: Ship) {
-		for (const location of ship.getLocations()) {
-			if (
-				location.row < 0 ||
-				location.row > 9 ||
-				location.col < 0 ||
-				location.col > 9 ||
-				this.hasShipAt(location)
-			) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 }

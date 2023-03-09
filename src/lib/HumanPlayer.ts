@@ -9,8 +9,6 @@ export class HumanPlayer extends Player {
 		this.guessBoard[location.row][location.col] = result
 			? Guess.Hit
 			: Guess.Miss;
-
-		return true;
 	}
 
 	/**

@@ -4,19 +4,15 @@ import type { Ship } from './Ship';
 
 export abstract class Player {
 	private ships: Ship[] = [];
-	protected guessBoard: string[][];
+	protected guessBoard: Guess[][];
 	protected hits: Location[] = [];
 
-	constructor(private name: string) {
+	constructor() {
 		this.guessBoard = Array.from({ length: 10 }, () =>
 			Array.from({ length: 10 }, () => Guess.Empty)
 		);
 
 		this.placeShips();
-	}
-
-	getName() {
-		return this.name;
 	}
 
 	getNumberOfShips() {
@@ -43,6 +39,22 @@ export abstract class Player {
 		return this.getShip(location) !== undefined;
 	}
 
+	canPlaceShip(ship: Ship) {
+		for (const location of ship.getLocations()) {
+			if (
+				location.row < 0 ||
+				location.row > 9 ||
+				location.col < 0 ||
+				location.col > 9 ||
+				this.hasShipAt(location)
+			) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	getHits() {
 		return this.hits;
 	}
@@ -50,16 +62,10 @@ export abstract class Player {
 	hit(location: Location) {
 		this.hits.push(location);
 
-		if (!this.hasShipAt(location)) {
-			this.guessBoard[location.row][location.col] = Guess.Miss;
-
-			return false;
-		}
+		if (!this.hasShipAt(location)) return false;
 
 		const ship = this.getShip(location)!;
 		ship.hit(location);
-
-		this.guessBoard[location.row][location.col] = Guess.Hit;
 
 		return true;
 	}
@@ -72,10 +78,6 @@ export abstract class Player {
 		return this.guessBoard;
 	}
 
-	equals(player: Player) {
-		return this.name === player.name;
-	}
-
-	abstract attack(player: Player, location: Location): boolean;
+	abstract attack(player: Player, location: Location): void;
 	abstract placeShips(): void;
 }
