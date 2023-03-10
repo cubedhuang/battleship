@@ -1,15 +1,15 @@
-import { Guess } from './Guess';
+import { CellState } from './CellState';
 import type { Location } from './Location';
 import type { Ship } from './Ship';
 
 export abstract class Player {
 	private ships: Ship[] = [];
-	protected guessBoard: Guess[][];
+	protected guessBoard: CellState[][];
 	protected hits: Location[] = [];
 
 	constructor() {
 		this.guessBoard = Array.from({ length: 10 }, () =>
-			Array.from({ length: 10 }, () => Guess.Empty)
+			Array.from({ length: 10 }, () => CellState.Empty)
 		);
 
 		this.placeShips();

@@ -1,15 +1,8 @@
 import { ComputerPlayer } from './ComputerPlayer';
-import { Guess } from './Guess';
+import { CellState } from './CellState';
 import { Location } from './Location';
 import type { Player } from './Player';
-import {
-	Carrier,
-	Cruiser,
-	Destroyer,
-	Orientation,
-	PatrolBoat,
-	Submarine
-} from './Ship';
+import { Orientation, SHIPS } from './Ship';
 
 export class HuntAndTargetComputer extends ComputerPlayer {
 	private stack: Location[] = [];
@@ -23,8 +16,8 @@ export class HuntAndTargetComputer extends ComputerPlayer {
 		const result = player.hit(location);
 
 		this.guessBoard[location.row][location.col] = result
-			? Guess.Hit
-			: Guess.Miss;
+			? CellState.Hit
+			: CellState.Miss;
 
 		if (result) {
 			const candidates = [
@@ -38,7 +31,7 @@ export class HuntAndTargetComputer extends ComputerPlayer {
 				if (
 					this.isValidLocation(candidate) &&
 					this.guessBoard[candidate.row][candidate.col] ===
-						Guess.Empty &&
+						CellState.Empty &&
 					!this.stack.some(location => location.equals(candidate))
 				) {
 					this.stack.push(candidate);
@@ -69,7 +62,7 @@ export class HuntAndTargetComputer extends ComputerPlayer {
 	}
 
 	placeShips() {
-		const ships = [Carrier, Cruiser, Destroyer, PatrolBoat, Submarine];
+		const ships = [...SHIPS];
 
 		for (const Ship of ships) {
 			while (true) {

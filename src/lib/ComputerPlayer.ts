@@ -1,14 +1,7 @@
-import { Guess } from './Guess';
+import { CellState } from './CellState';
 import { Location } from './Location';
 import { Player } from './Player';
-import {
-	Carrier,
-	Cruiser,
-	Destroyer,
-	Orientation,
-	PatrolBoat,
-	Submarine
-} from './Ship';
+import { Orientation, SHIPS } from './Ship';
 
 export class ComputerPlayer extends Player {
 	attack(player: Player, _: Location) {
@@ -17,8 +10,8 @@ export class ComputerPlayer extends Player {
 		const result = player.hit(location);
 
 		this.guessBoard[location.row][location.col] = result
-			? Guess.Hit
-			: Guess.Miss;
+			? CellState.Hit
+			: CellState.Miss;
 	}
 
 	protected getRandomLocation() {
@@ -34,7 +27,7 @@ export class ComputerPlayer extends Player {
 
 		for (let row = 0; row < 10; row++) {
 			for (let col = 0; col < 10; col++) {
-				if (this.guessBoard[row][col] === Guess.Empty) {
+				if (this.guessBoard[row][col] === CellState.Empty) {
 					locations.push(new Location(row, col));
 				}
 			}
@@ -44,7 +37,7 @@ export class ComputerPlayer extends Player {
 	}
 
 	placeShips() {
-		const ships = [Carrier, Cruiser, Destroyer, PatrolBoat, Submarine];
+		const ships = [...SHIPS];
 
 		for (const Ship of ships) {
 			while (true) {

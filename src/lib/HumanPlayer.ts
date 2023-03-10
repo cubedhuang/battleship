@@ -1,4 +1,4 @@
-import { Guess } from './Guess';
+import { CellState } from './CellState';
 import type { Location } from './Location';
 import { Player } from './Player';
 
@@ -7,8 +7,8 @@ export class HumanPlayer extends Player {
 		const result = player.hit(location);
 
 		this.guessBoard[location.row][location.col] = result
-			? Guess.Hit
-			: Guess.Miss;
+			? CellState.Hit
+			: CellState.Miss;
 	}
 
 	/**

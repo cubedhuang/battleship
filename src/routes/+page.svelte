@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 
-	import { Guess } from '$lib/Guess';
+	import { CellState } from '$lib/CellState';
 	import { HumanPlayer } from '$lib/HumanPlayer';
 	import { HuntAndTargetComputer } from '$lib/HuntAndTargetComputer';
 	import { Location } from '$lib/Location';
@@ -60,8 +60,8 @@
 	let player = new HumanPlayer();
 	let computer = new ComputerType();
 
-	function attack(guess: Guess, location: Location) {
-		if (stage !== Stage.Playing || guess !== Guess.Empty) {
+	function attack(guess: CellState, location: Location) {
+		if (stage !== Stage.Playing || guess !== CellState.Empty) {
 			return;
 		}
 
@@ -128,12 +128,13 @@
 	<title>Battleship</title>
 </svelte:head>
 
-<div
-	class="min-h-screen grid place-items-center
-		bg-black text-white"
->
+<div class="min-h-screen grid place-items-center">
 	<div class="flex flex-col gap-2">
-		<h1 class="font-black text-center text-4xl">Battleship</h1>
+		<div class="flex items-center justify-between">
+			<h1 class="font-black text-center text-4xl">Battleship</h1>
+
+			<a href="/about" class="px-4 py-2 interactive font-bold">About</a>
+		</div>
 
 		<div class="flex gap-2">
 			<div class="mt-1 area aspect-square grid grid-cols-10">
@@ -196,7 +197,8 @@
 					{#each row as guess, colIndex (colIndex)}
 						{@const location = new Location(rowIndex, colIndex)}
 						{@const interactive =
-							stage === Stage.Playing && guess === Guess.Empty}
+							stage === Stage.Playing &&
+							guess === CellState.Empty}
 
 						<button
 							disabled={!interactive}
@@ -208,9 +210,9 @@
 						>
 							<span
 								class="w-6 h-6 rounded-full border-4 transition-colors
-									{guess === Guess.Hit
+									{guess === CellState.Hit
 									? 'border-transparent bg-red-500'
-									: guess === Guess.Miss
+									: guess === CellState.Miss
 									? 'border-slate-900 bg-white'
 									: 'border-slate-600'}
 									{interactive
@@ -225,10 +227,12 @@
 
 		{#if stage === Stage.Placing}
 			<div class="area">
-				<kbd class="bg-black px-0.5 rounded border border-slate-700">
-					R
-				</kbd>
-				rotate
+				<p class="font-bold">
+					<kbd class="bg-black px-1 rounded border border-slate-700">
+						R
+					</kbd>
+					rotate
+				</p>
 
 				<div class="mt-2 flex flex-wrap">
 					{#each shipsLeft as Ship}
@@ -286,8 +290,7 @@
 				</h1>
 
 				<button
-					class="px-4 py-2 rounded-xl bg-slate-800 border-2 border-slate-700 transition-colors
-						hover:bg-slate-700 outline-none focus:bg-slate-700"
+					class="px-4 py-2 interactive"
 					on:click={() => {
 						stage = Stage.Placing;
 						winner = null;
@@ -316,9 +319,3 @@
 		You sunk my battleship!
 	</div>
 {/if}
-
-<style lang="postcss">
-	.area {
-		@apply p-4 rounded-xl bg-slate-900 border-2 border-slate-800;
-	}
-</style>
