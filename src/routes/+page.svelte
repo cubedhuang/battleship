@@ -124,6 +124,10 @@
 	}}
 />
 
+<svelte:head>
+	<title>Battleship</title>
+</svelte:head>
+
 <div
 	class="min-h-screen grid place-items-center
 		bg-black text-white"
@@ -182,6 +186,12 @@
 			</div>
 
 			<div class="mt-1 area aspect-square grid grid-cols-10">
+				{#if stage === Stage.Ended}
+					{#each computer.getShips() as ship}
+						<ShipDisplay {ship} />
+					{/each}
+				{/if}
+
 				{#each player.getGuessBoard() as row, rowIndex (rowIndex)}
 					{#each row as guess, colIndex (colIndex)}
 						{@const location = new Location(rowIndex, colIndex)}
@@ -191,6 +201,8 @@
 						<button
 							disabled={!interactive}
 							class="p-1 group grid place-items-center"
+							style:grid-row={rowIndex + 1}
+							style:grid-column={colIndex + 1}
 							on:click={() => attack(guess, location)}
 							on:keypress={() => attack(guess, location)}
 						>
