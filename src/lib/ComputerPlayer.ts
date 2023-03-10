@@ -21,7 +21,7 @@ export class ComputerPlayer extends Player {
 			: Guess.Miss;
 	}
 
-	private getRandomLocation() {
+	protected getRandomLocation() {
 		const locations = this.getEmptyLocations();
 		const location =
 			locations[Math.floor(Math.random() * locations.length)];
@@ -29,7 +29,7 @@ export class ComputerPlayer extends Player {
 		return location;
 	}
 
-	private getEmptyLocations() {
+	protected getEmptyLocations() {
 		const locations: Location[] = [];
 
 		for (let row = 0; row < 10; row++) {

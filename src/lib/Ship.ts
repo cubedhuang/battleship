@@ -88,3 +88,11 @@ export class PatrolBoat extends Ship {
 		super('Patrol Boat', 2, start, orientation);
 	}
 }
+
+export const SHIPS = [
+	Carrier,
+	Cruiser,
+	Destroyer,
+	Submarine,
+	PatrolBoat
+] as const;

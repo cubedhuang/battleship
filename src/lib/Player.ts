@@ -78,6 +78,10 @@ export abstract class Player {
 		return this.guessBoard;
 	}
 
+	isDead() {
+		return this.ships.every(ship => ship.isSunk());
+	}
+
 	abstract attack(player: Player, location: Location): void;
 	abstract placeShips(): void;
 }

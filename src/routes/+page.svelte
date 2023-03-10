@@ -1,41 +1,40 @@
 <script lang="ts">
-	import { ComputerPlayer } from '$lib/ComputerPlayer';
+	import { fly } from 'svelte/transition';
+
 	import { Guess } from '$lib/Guess';
 	import { HumanPlayer } from '$lib/HumanPlayer';
+	import { HuntAndTargetComputer } from '$lib/HuntAndTargetComputer';
 	import { Location } from '$lib/Location';
-	import {
-		Carrier,
-		Cruiser,
-		Destroyer,
-		Orientation,
-		PatrolBoat,
-		Ship,
-		Submarine
-	} from '$lib/Ship';
+	import { Carrier, Orientation, Ship, SHIPS } from '$lib/Ship';
 
 	import ShipDisplay from './ShipDisplay.svelte';
 
+	const ComputerType = HuntAndTargetComputer;
+
 	enum Stage {
 		Placing,
-		Playing
+		Playing,
+		Ended
 	}
 
 	let stage = Stage.Placing;
+	let winner = null;
+	let notified = false;
 
-	let shipsLeft = [Carrier, Destroyer, Cruiser, Submarine, PatrolBoat];
+	let shipsLeft = [...SHIPS];
 	let CurrentShip: new (start: Location, orientation: Orientation) => Ship =
 		Carrier;
 	let currentOrientation = Orientation.Horizontal;
 	let ghostShip: Ship | null = null;
 
-	function hoverShip(location: Location) {
-		if (stage !== Stage.Placing) return null;
+	function hoverShip(location: Location | null) {
+		if (stage !== Stage.Placing) return;
 
-		ghostShip = new CurrentShip(location, currentOrientation);
+		ghostShip = location && new CurrentShip(location, currentOrientation);
 	}
 
 	function placeShip(location: Location) {
-		if (stage !== Stage.Placing) return null;
+		if (stage !== Stage.Placing) return;
 
 		ghostShip = new CurrentShip(location, currentOrientation);
 
@@ -59,7 +58,7 @@
 	}
 
 	let player = new HumanPlayer();
-	let computer = new ComputerPlayer();
+	let computer = new ComputerType();
 
 	function attack(guess: Guess, location: Location) {
 		if (stage !== Stage.Playing || guess !== Guess.Empty) {
@@ -67,7 +66,36 @@
 		}
 
 		player.attack(computer, location);
+
+		if (computer.isDead()) {
+			winner = player;
+			stage = Stage.Ended;
+
+			player = player;
+			computer = computer;
+
+			return;
+		}
+
+		if (computer.getShip(location)?.isSunk()) {
+			notified = true;
+
+			setTimeout(() => {
+				notified = false;
+			}, 3000);
+		}
+
 		computer.attack(player, new Location(0, 0));
+
+		if (player.isDead()) {
+			winner = computer;
+			stage = Stage.Ended;
+
+			player = player;
+			computer = computer;
+
+			return;
+		}
 
 		player = player;
 		computer = computer;
@@ -123,15 +151,15 @@
 						{@const isHit = player.wasHitAt(location)}
 						{@const isShip = player.hasShipAt(location)}
 
-						<svelte:element
-							this={stage === Stage.Placing && !isShip
-								? 'button'
-								: 'div'}
+						<button
 							class="group p-1 grid place-items-center"
+							disabled={stage !== Stage.Placing || isShip}
 							style:grid-row={row + 1}
 							style:grid-column={col + 1}
 							on:mouseover={() => hoverShip(location)}
 							on:focus={() => hoverShip(location)}
+							on:mouseleave={() => hoverShip(null)}
+							on:blur={() => hoverShip(null)}
 							on:click={() => placeShip(location)}
 							on:keypress|preventDefault
 						>
@@ -148,20 +176,20 @@
 									? 'group-hover:border-slate-400 group-active:border-slate-200'
 									: ''}"
 							/>
-						</svelte:element>
+						</button>
 					{/each}
 				{/each}
 			</div>
 
 			<div class="mt-1 area aspect-square grid grid-cols-10">
-				{#each player.getGuessBoard() as row, rowIndex}
-					{#each row as guess, colIndex}
+				{#each player.getGuessBoard() as row, rowIndex (rowIndex)}
+					{#each row as guess, colIndex (colIndex)}
 						{@const location = new Location(rowIndex, colIndex)}
 						{@const interactive =
 							stage === Stage.Playing && guess === Guess.Empty}
 
-						<svelte:element
-							this={interactive ? 'button' : 'div'}
+						<button
+							disabled={!interactive}
 							class="p-1 group grid place-items-center"
 							on:click={() => attack(guess, location)}
 							on:keypress={() => attack(guess, location)}
@@ -177,63 +205,105 @@
 									? 'group-hover:border-slate-400 group-active:border-slate-200'
 									: ''}"
 							/>
-						</svelte:element>
+						</button>
 					{/each}
 				{/each}
 			</div>
 		</div>
 
-		<div class="area">
-			<div>
-				{#each shipsLeft as Ship}
-					{@const selected = Ship === CurrentShip}
+		{#if stage === Stage.Placing}
+			<div class="area">
+				<kbd class="bg-black px-0.5 rounded border border-slate-700">
+					R
+				</kbd>
+				rotate
 
-					<button
-						on:click={() => {
-							CurrentShip = Ship;
-							currentOrientation = Orientation.Horizontal;
-							ghostShip = null;
-						}}
-						class="contents"
-					>
-						<div
-							class="inline-grid
-								{selected ? 'cursor-default' : 'cursor-pointer'}"
-							style:grid-template-columns="repeat({Ship.LENGTH},
-							minmax(0, 1fr));"
+				<div class="mt-2 flex flex-wrap">
+					{#each shipsLeft as Ship}
+						{@const selected = Ship === CurrentShip}
+
+						<button
+							on:click={() => {
+								CurrentShip = Ship;
+								currentOrientation = Orientation.Horizontal;
+								ghostShip = null;
+							}}
+							class="contents"
 						>
-							<ShipDisplay
-								ship={new Ship(
-									new Location(0, 0),
-									Orientation.Horizontal
-								)}
-								ghost={Ship === CurrentShip}
-							/>
+							<div
+								class="grid
+								{selected ? 'cursor-default' : 'cursor-pointer'}"
+								style:grid-template-columns="repeat({Ship.LENGTH},
+								minmax(0, 1fr));"
+							>
+								<ShipDisplay
+									ship={new Ship(
+										new Location(0, 0),
+										Orientation.Horizontal
+									)}
+									ghost={Ship === CurrentShip}
+								/>
 
-							{#each { length: Ship.LENGTH } as _, i}
-								<div
-									class="group p-1 grid place-items-center"
-									style:grid-row={1}
-									style:grid-column={i + 1}
-								>
+								{#each { length: Ship.LENGTH } as _, i}
 									<div
-										class="w-6 h-6 rounded-full border-4 transition-colors
+										class="group p-1 grid place-items-center"
+										style:grid-row={1}
+										style:grid-column={i + 1}
+									>
+										<div
+											class="w-6 h-6 rounded-full border-4 transition-colors
 											{Ship === CurrentShip ? 'border-gray-600' : 'border-slate-400'}"
-									/>
-								</div>
-							{/each}
-						</div>
-					</button>
-				{/each}
+										/>
+									</div>
+								{/each}
+							</div>
+						</button>
+					{/each}
+				</div>
 			</div>
+		{/if}
 
-			<kbd class="bg-black px-0.5 rounded border border-slate-700">
-				R
-			</kbd>
-			rotate
-		</div>
+		{#if stage === Stage.Ended}
+			<div class="area flex items-center justify-between">
+				<h1 class="font-bold text-2xl">
+					{#if player.isDead()}
+						You lost...
+					{:else}
+						You won!
+					{/if}
+				</h1>
+
+				<button
+					class="px-4 py-2 rounded-xl bg-slate-800 border-2 border-slate-700 transition-colors
+						hover:bg-slate-700 outline-none focus:bg-slate-700"
+					on:click={() => {
+						stage = Stage.Placing;
+						winner = null;
+
+						player = new HumanPlayer();
+						computer = new ComputerType();
+
+						shipsLeft = [...SHIPS];
+						CurrentShip = shipsLeft[0];
+						currentOrientation = Orientation.Horizontal;
+						ghostShip = null;
+					}}
+				>
+					Play again
+				</button>
+			</div>
+		{/if}
 	</div>
 </div>
+
+{#if notified}
+	<div
+		class="fixed bottom-2 right-2 area text-white"
+		transition:fly={{ y: 4 }}
+	>
+		You sunk my battleship!
+	</div>
+{/if}
 
 <style lang="postcss">
 	.area {
