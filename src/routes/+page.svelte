@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition';
-
 	import { CellState } from '$lib/CellState';
 	import { HumanPlayer } from '$lib/HumanPlayer';
 	import { Comprehension } from '$lib/Comprehension';
@@ -8,7 +6,6 @@
 	import { Carrier, Orientation, Ship, SHIPS } from '$lib/Ship';
 
 	import ShipDisplay from './ShipDisplay.svelte';
-	import { onMount } from 'svelte';
 
 	const ComputerType = Comprehension;
 
@@ -20,7 +17,6 @@
 
 	let stage = Stage.Placing;
 	let winner = null;
-	let notified = false;
 
 	let shipsLeft = [...SHIPS];
 	let CurrentShip: new (start: Location, orientation: Orientation) => Ship =
@@ -76,14 +72,6 @@
 			computer = computer;
 
 			return;
-		}
-
-		if (computer.getShip(location)?.isSunk()) {
-			notified = true;
-
-			setTimeout(() => {
-				notified = false;
-			}, 3000);
 		}
 
 		computer.attack(player, new Location(0, 0));
@@ -190,6 +178,10 @@
 			<div class="mt-1 area aspect-square grid grid-cols-10">
 				{#if stage === Stage.Ended}
 					{#each computer.getShips() as ship}
+						<ShipDisplay {ship} />
+					{/each}
+				{:else if stage === Stage.Playing}
+					{#each computer.getShips().filter(s => s.isSunk()) as ship}
 						<ShipDisplay {ship} />
 					{/each}
 				{/if}
@@ -311,12 +303,3 @@
 		{/if}
 	</div>
 </div>
-
-{#if notified}
-	<div
-		class="fixed bottom-2 right-2 area text-white"
-		transition:fly={{ y: 4 }}
-	>
-		You sunk my battleship!
-	</div>
-{/if}
