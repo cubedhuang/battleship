@@ -66,6 +66,11 @@ export abstract class Player {
 	}
 
 	hit(location: Location) {
+		if (this.hits.some(hit => hit.equals(location))) {
+			console.warn('Already hit this location', location);
+			return this.hasShipAt(location) ? HitResult.Hit : HitResult.Miss;
+		}
+
 		this.hits.push(location);
 
 		if (!this.hasShipAt(location)) return HitResult.Miss;

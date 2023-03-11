@@ -1,7 +1,7 @@
-import { CellState } from './CellState';
-import { Location } from './Location';
-import { HitResult, Player } from './Player';
-import { Orientation, SHIPS } from './Ship';
+import { CellState } from '../CellState';
+import { Location } from '../Location';
+import { HitResult, Player } from '../Player';
+import { Orientation, SHIPS } from '../Ship';
 
 export class ComputerPlayer extends Player {
 	attack(player: Player, _: Location) {

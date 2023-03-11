@@ -4,6 +4,7 @@
 	<h1>About</h1>
 
 	<p class="flex gap-4">
+		<a href="/testing"> Computer Testing </a>
 		<a
 			href="https://github.com/cubedhuang/battleship"
 			target="_blank"

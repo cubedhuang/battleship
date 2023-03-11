@@ -1,8 +1,8 @@
 import { ComputerPlayer } from './ComputerPlayer';
-import { CellState } from './CellState';
-import { Location } from './Location';
-import { HitResult, type Player } from './Player';
-import { Orientation, SHIPS } from './Ship';
+import { CellState } from '../CellState';
+import { Location } from '../Location';
+import { HitResult, type Player } from '../Player';
+import { Orientation, SHIPS } from '../Ship';
 
 export class HuntAndTargetComputer extends ComputerPlayer {
 	private stack: Location[] = [];
@@ -39,8 +39,6 @@ export class HuntAndTargetComputer extends ComputerPlayer {
 				}
 			}
 		}
-
-		console.log(location, result, this.stack);
 	}
 
 	protected isValidLocation(location: Location) {

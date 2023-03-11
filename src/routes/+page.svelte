@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { CellState } from '$lib/CellState';
 	import { HumanPlayer } from '$lib/HumanPlayer';
-	import { Comprehension } from '$lib/Comprehension';
+	import { Comprehension } from '$lib/computers/Comprehension';
 	import { Location } from '$lib/Location';
 	import { Carrier, Orientation, Ship, SHIPS } from '$lib/Ship';
 

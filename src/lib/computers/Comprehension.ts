@@ -1,6 +1,6 @@
 import { ComputerPlayer } from './ComputerPlayer';
-import { Location } from './Location';
-import { HitResult, Player } from './Player';
+import { Location } from '../Location';
+import { HitResult, Player } from '../Player';
 
 /**
  * Different possible pieces of information about a cell.
@@ -274,7 +274,7 @@ export class Comprehension extends ComputerPlayer {
 					length => length <= size
 				);
 
-				if (shipsLeft.length === 1) {
+				if (shipsLeft.length === 1 && shipsLeft[0] === size) {
 					const shipLength = shipsLeft[0];
 
 					if (width === shipLength) {
@@ -493,5 +493,23 @@ export class Comprehension extends ComputerPlayer {
 		}
 
 		return distance;
+	}
+
+	// Debugging and inspection getters
+
+	getGuesses() {
+		return this.guesses;
+	}
+
+	getUnknownHeatMap() {
+		return this.unknownHeatMap;
+	}
+
+	getHitsHeatMap() {
+		return this.hitsHeatMap;
+	}
+
+	getShipsLeft() {
+		return this.shipsLeft;
 	}
 }
