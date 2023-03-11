@@ -32,35 +32,43 @@
 		second = second;
 	}
 
-	function startGame() {
-		const currentId = setInterval(() => {
-			if (first.isDead() || second.isDead()) {
-				clearInterval(id);
+	function reset() {
+		first = new Comprehension();
+		second = new HuntAndTargetComputer();
 
-				if (first.isDead()) {
-					secondScore++;
-				} else {
-					firstScore++;
-				}
+		turn = Math.random() > 0.5 ? 1 : 0;
+		firstAttacks = 0;
+		secondAttacks = 0;
 
-				id = setTimeout(() => {
-					first = new Comprehension();
-					second = new HuntAndTargetComputer();
+		first = first;
+		second = second;
 
-					turn = Math.random() > 0.5 ? 1 : 0;
-					firstAttacks = 0;
-					secondAttacks = 0;
+		id = startGame();
+	}
 
-					first = first;
-					second = second;
+	function move() {
+		if (first.isDead() || second.isDead()) {
+			clearInterval(id);
 
-					id = startGame();
-				}, 2000);
-
-				return;
+			if (first.isDead()) {
+				secondScore++;
+			} else {
+				firstScore++;
 			}
 
-			attack(new Location(0, 0));
+			id = setTimeout(() => reset(), 200);
+
+			return true;
+		}
+
+		attack(new Location(0, 0));
+
+		return false;
+	}
+
+	function startGame() {
+		const currentId = setInterval(() => {
+			move();
 
 			first = first;
 			second = second;
@@ -76,7 +84,7 @@
 	});
 </script>
 
-<div class="min-h-screen grid place-items-center">
+<div class="min-h-screen py-20 grid place-items-center">
 	<div class="flex flex-col gap-2">
 		<div class="flex items-center justify-between">
 			<h1 class="font-black text-center text-4xl">Testing Arena</h1>
@@ -89,8 +97,8 @@
 				<div class="flex gap-4 font-bold text-center">
 					<h1>Comprehension</h1>
 
-					<p class="ml-auto">{firstAttacks} Attacks</p>
-					<p>{firstScore} Wins</p>
+					<p class="ml-auto">Turn {firstAttacks}</p>
+					<p>{firstScore}</p>
 				</div>
 
 				<div class="mt-2 grid grid-cols-10">
@@ -129,8 +137,8 @@
 				<div class="flex gap-4 font-bold text-center">
 					<h1>HuntAndTarget</h1>
 
-					<p class="ml-auto">{secondAttacks} Attacks</p>
-					<p>{secondScore} Wins</p>
+					<p class="ml-auto">Turn {secondAttacks}</p>
+					<p>{secondScore}</p>
 				</div>
 
 				<div class="mt-2 grid grid-cols-10">
