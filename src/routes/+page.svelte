@@ -305,7 +305,7 @@
 						ghostShip = null;
 					}}
 				>
-					Play again
+					Play Again
 				</button>
 			</div>
 		{/if}
