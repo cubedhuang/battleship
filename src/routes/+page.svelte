@@ -126,7 +126,7 @@
 		</div>
 
 		<div class="flex gap-2">
-			<div class="mt-1 area aspect-square grid grid-cols-10">
+			<div class="area aspect-square grid grid-cols-10">
 				{#if stage === Stage.Placing && ghostShip}
 					<ShipDisplay
 						ship={ghostShip}
@@ -175,7 +175,7 @@
 				{/each}
 			</div>
 
-			<div class="mt-1 area aspect-square grid grid-cols-10">
+			<div class="area aspect-square grid grid-cols-10">
 				{#if stage === Stage.Ended}
 					{#each computer.getShips() as ship}
 						<ShipDisplay {ship} />
