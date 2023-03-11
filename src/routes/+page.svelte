@@ -3,13 +3,14 @@
 
 	import { CellState } from '$lib/CellState';
 	import { HumanPlayer } from '$lib/HumanPlayer';
-	import { HuntAndTargetComputer } from '$lib/HuntAndTargetComputer';
+	import { Comprehension } from '$lib/Comprehension';
 	import { Location } from '$lib/Location';
 	import { Carrier, Orientation, Ship, SHIPS } from '$lib/Ship';
 
 	import ShipDisplay from './ShipDisplay.svelte';
+	import { onMount } from 'svelte';
 
-	const ComputerType = HuntAndTargetComputer;
+	const ComputerType = Comprehension;
 
 	enum Stage {
 		Placing,

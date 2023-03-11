@@ -2,6 +2,12 @@ import { CellState } from './CellState';
 import type { Location } from './Location';
 import type { Ship } from './Ship';
 
+export enum HitResult {
+	Miss,
+	Hit,
+	Sunk
+}
+
 export abstract class Player {
 	private ships: Ship[] = [];
 	protected guessBoard: CellState[][];
@@ -62,12 +68,12 @@ export abstract class Player {
 	hit(location: Location) {
 		this.hits.push(location);
 
-		if (!this.hasShipAt(location)) return false;
+		if (!this.hasShipAt(location)) return HitResult.Miss;
 
 		const ship = this.getShip(location)!;
 		ship.hit(location);
 
-		return true;
+		return ship.isSunk() ? HitResult.Sunk : HitResult.Hit;
 	}
 
 	wasHitAt(location: Location) {

@@ -1,7 +1,7 @@
 import { ComputerPlayer } from './ComputerPlayer';
 import { CellState } from './CellState';
 import { Location } from './Location';
-import type { Player } from './Player';
+import { HitResult, type Player } from './Player';
 import { Orientation, SHIPS } from './Ship';
 
 export class HuntAndTargetComputer extends ComputerPlayer {
@@ -15,9 +15,10 @@ export class HuntAndTargetComputer extends ComputerPlayer {
 
 		const result = player.hit(location);
 
-		this.guessBoard[location.row][location.col] = result
-			? CellState.Hit
-			: CellState.Miss;
+		this.guessBoard[location.row][location.col] =
+			result === HitResult.Hit || result === HitResult.Sunk
+				? CellState.Hit
+				: CellState.Miss;
 
 		if (result) {
 			const candidates = [

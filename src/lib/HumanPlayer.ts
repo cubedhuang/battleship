@@ -1,14 +1,15 @@
 import { CellState } from './CellState';
 import type { Location } from './Location';
-import { Player } from './Player';
+import { HitResult, Player } from './Player';
 
 export class HumanPlayer extends Player {
 	attack(player: Player, location: Location) {
 		const result = player.hit(location);
 
-		this.guessBoard[location.row][location.col] = result
-			? CellState.Hit
-			: CellState.Miss;
+		this.guessBoard[location.row][location.col] =
+			result === HitResult.Hit || result === HitResult.Sunk
+				? CellState.Hit
+				: CellState.Miss;
 	}
 
 	/**
