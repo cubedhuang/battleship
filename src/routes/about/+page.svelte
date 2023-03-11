@@ -17,6 +17,16 @@
 		This is a battleship game I made for a project in my
 		<em>AP Computer Science A</em> class.
 	</p>
+
+	<p>
+		The computer is given less information than the player. In standard
+		battleship, when a ship is sunk, the player must announce that a ship
+		was sunk but is not required to announce which ship. The computer is
+		given exactly that information whenever it tries a shot &ndash; whether
+		a shot hits, misses, or sinks some ship. The player has more information
+		because you can see exactly which ship and its locations after you sink
+		it.
+	</p>
 </main>
 
 <style lang="postcss">
