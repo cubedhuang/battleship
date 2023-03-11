@@ -56,7 +56,7 @@
 				firstScore++;
 			}
 
-			id = setTimeout(() => reset(), 200);
+			id = setTimeout(() => reset(), 1000);
 
 			return true;
 		}
