@@ -28,7 +28,7 @@ export class Comprehension extends ComputerPlayer {
 	private shipsLeft = [5, 4, 3, 3, 2];
 
 	/**
-	 * The cells we should shoot with highest priority.
+	 * Cells that are guaranteed to be part of a ship and must be attacked.
 	 */
 	private priorityCells: Location[] = [];
 
