@@ -174,7 +174,7 @@
 									{isHit && isShip
 									? 'border-transparent bg-red-500'
 									: isHit
-									? 'border-red-500'
+									? 'border-slate-900 bg-white'
 									: isShip
 									? 'border-slate-400'
 									: 'border-slate-600'}
