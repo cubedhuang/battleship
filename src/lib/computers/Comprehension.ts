@@ -5,7 +5,7 @@ import { HitResult, Player } from '../Player';
 /**
  * Different possible pieces of information about a cell.
  */
-enum GuessState {
+export enum GuessState {
 	Unknown,
 	Miss,
 	Hit,
@@ -87,6 +87,13 @@ export class Comprehension extends ComputerPlayer {
 
 		if (result === HitResult.Miss) {
 			this.guesses[location.row][location.col] = GuessState.Miss;
+			return;
+		}
+
+		if (
+			this.guesses[location.row][location.col] ===
+			GuessState.SunkConfirmed
+		) {
 			return;
 		}
 
