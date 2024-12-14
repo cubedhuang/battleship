@@ -16,7 +16,8 @@
 	</p>
 
 	<p>
-		This is a battleship game I made for a project in my
+		This is a JavaScript port of a Battleship game I made for a project in
+		my
 		<em>AP Computer Science A</em> class.
 	</p>
 

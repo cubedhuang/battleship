@@ -1,6 +1,6 @@
 import { CellState } from '../CellState';
 import { Location } from '../Location';
-import { HitResult, Player } from '../Player';
+import { HitResultType, Player } from '../Player';
 import { Orientation, SHIPS } from '../Ship';
 
 export class ComputerPlayer extends Player {
@@ -10,9 +10,7 @@ export class ComputerPlayer extends Player {
 		const result = player.hit(location);
 
 		this.guessBoard[location.row][location.col] =
-			result === HitResult.Hit || result === HitResult.Sunk
-				? CellState.Hit
-				: CellState.Miss;
+			result.type !== HitResultType.Miss ? CellState.Hit : CellState.Miss;
 	}
 
 	protected getRandomLocation() {

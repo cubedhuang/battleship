@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { CellState } from '$lib/CellState';
 	import { HumanPlayer } from '$lib/HumanPlayer';
-	import { Comprehension } from '$lib/computers/Comprehension';
+	import { ComputerPlayer } from '$lib/computers/ComputerPlayer';
+	import { Eckspurt } from '$lib/computers/Eckspurt';
 	import { Location } from '$lib/Location';
 	import { Carrier, Orientation, Ship, SHIPS } from '$lib/Ship';
 
 	import ShipDisplay from './ShipDisplay.svelte';
+	import { HuntAndTargetComputer } from '$lib/computers/HuntAndTargetComputer';
 
-	const ComputerType = Comprehension;
+	let Computers = [ComputerPlayer, HuntAndTargetComputer, Eckspurt];
+
+	let ComputerType: typeof ComputerPlayer = ComputerPlayer;
 
 	enum Stage {
 		Placing,
@@ -175,7 +179,36 @@
 				{/each}
 			</div>
 
-			<div class="area aspect-square grid grid-cols-10">
+			<div
+				class="area aspect-square grid grid-cols-10 relative overflow-hidden"
+			>
+				{#if stage === Stage.Placing}
+					<div
+						class="absolute inset-0 backdrop-blur-sm grid place-content-center"
+					>
+						<h2 class="text-center mb-2 font-semibold">
+							Select an opponent.
+						</h2>
+
+						{#each Computers as Computer}
+							{@const interactive = Computer !== ComputerType}
+							<button
+								class="px-4 py-1 mt-1 border-2 rounded-xl transition-colors
+									{!interactive ? 'bg-green-900 border-green-400 text-green-200' : ''}"
+								class:interactive
+								on:click={() => {
+									ComputerType = Computer;
+									computer = new ComputerType();
+								}}
+							>
+								{Computer.name === 'ComputerPlayer'
+									? 'Random'
+									: Computer.name}
+							</button>
+						{/each}
+					</div>
+				{/if}
+
 				{#if stage === Stage.Ended}
 					{#each computer.getShips() as ship}
 						<ShipDisplay {ship} />

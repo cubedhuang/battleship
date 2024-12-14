@@ -1,6 +1,6 @@
 import { ComputerPlayer } from './ComputerPlayer';
 import { Location } from '../Location';
-import { HitResult, Player } from '../Player';
+import { HitResultType, Player } from '../Player';
 
 /**
  * Different possible pieces of information about a cell.
@@ -85,7 +85,7 @@ export class Comprehension extends ComputerPlayer {
 
 		const result = player.hit(location);
 
-		if (result === HitResult.Miss) {
+		if (result.type === HitResultType.Miss) {
 			this.guesses[location.row][location.col] = GuessState.Miss;
 			return;
 		}
@@ -98,11 +98,11 @@ export class Comprehension extends ComputerPlayer {
 		}
 
 		this.guesses[location.row][location.col] =
-			result === HitResult.Sunk
+			result.type === HitResultType.Sunk
 				? GuessState.SunkUnknownShip
 				: GuessState.Hit;
 
-		if (result === HitResult.Hit) return;
+		if (result.type === HitResultType.Hit) return;
 
 		// Check if the sunk location confirms a ship
 

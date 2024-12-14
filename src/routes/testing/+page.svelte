@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { Comprehension, GuessState } from '$lib/computers/Comprehension';
+	import { Eckspurt, SeaState } from '$lib/computers/Eckspurt';
 	import { HumanPlayer } from '$lib/HumanPlayer';
 	import { Location } from '$lib/Location';
 	import { Carrier, Orientation, Ship, SHIPS } from '$lib/Ship';
 
 	import ShipDisplay from '../ShipDisplay.svelte';
 
-	const ComputerType = Comprehension;
+	const ComputerType = Eckspurt;
 
 	enum Stage {
 		Placing,
@@ -53,6 +53,18 @@
 		}
 
 		human = human;
+	}
+
+	function normalizeHeatMap(heatMap: readonly number[][]) {
+		const max = Math.max(
+			...heatMap.flatMap(row =>
+				row ? row.map(value => Math.abs(value)) : []
+			)
+		);
+
+		return heatMap.map(row =>
+			row ? row.map(value => (value / max) * 100) : []
+		);
 	}
 
 	let human = new HumanPlayer();
@@ -218,12 +230,12 @@
 
 			<div class="area flex gap-2">
 				<div class="grid grid-cols-10 rounded-xl overflow-hidden">
-					{#each computer.getUnknownHeatMap() as row}
+					{#each normalizeHeatMap(computer.offense.getLastHeatMap()) as row}
 						{#each row as guess}
 							<div
 								class="w-4 h-4"
 								style:background-color={`hsl(${
-									guess * 5
+									guess * 1
 								}, 100%, 50%)`}
 							/>
 						{/each}
@@ -231,31 +243,16 @@
 				</div>
 
 				<div class="grid grid-cols-10 rounded-xl overflow-hidden">
-					{#each computer.getHitsHeatMap() as row}
-						{#each row as guess}
-							<div
-								class="w-4 h-4"
-								style:background-color={`hsl(${
-									guess * 20
-								}, 100%, 50%)`}
-							/>
-						{/each}
-					{/each}
-				</div>
-
-				<div class="grid grid-cols-10 rounded-xl overflow-hidden">
-					{#each computer.getGuesses() as row}
+					{#each computer.offense.getGameState() as row}
 						{#each row as guess}
 							<div
 								class="w-4 h-4
-								{guess === GuessState.Unknown
+								{guess === SeaState.Unknown
 									? 'bg-slate-600'
-									: guess === GuessState.Miss
+									: guess === SeaState.Miss
 									? 'bg-slate-800'
-									: guess === GuessState.Hit
+									: guess === SeaState.Hit
 									? 'bg-red-500'
-									: guess === GuessState.SunkUnknownShip
-									? 'bg-blue-500'
 									: 'bg-green-500'}"
 							/>
 						{/each}
@@ -266,7 +263,7 @@
 					<h2 class="font-bold">Potential Ships Left</h2>
 
 					<ul class="flex gap-2">
-						{#each computer.getShipsLeft() as ship}
+						{#each computer.offense.getShipsLeft() as ship}
 							<li>{ship}</li>
 						{/each}
 					</ul>

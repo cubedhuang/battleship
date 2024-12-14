@@ -2,12 +2,12 @@
 	import { onMount } from 'svelte';
 
 	import { Comprehension, GuessState } from '$lib/computers/Comprehension';
-	import { ComputerPlayer } from '$lib/computers/ComputerPlayer';
 	import { Location } from '$lib/Location';
 	import ShipDisplay from '../ShipDisplay.svelte';
+	import { Eckspurt } from '$lib/computers/Eckspurt';
 
 	let first = new Comprehension();
-	let second = new ComputerPlayer();
+	let second = new Eckspurt();
 
 	let turn = 0;
 	let firstAttacks = 0;
@@ -34,7 +34,7 @@
 
 	function reset() {
 		first = new Comprehension();
-		second = new ComputerPlayer();
+		second = new Eckspurt();
 
 		turn = Math.random() > 0.5 ? 1 : 0;
 		firstAttacks = 0;
@@ -137,7 +137,7 @@
 
 			<div class="area">
 				<div class="flex gap-4 font-bold text-center">
-					<h1>ComputerPlayer</h1>
+					<h1>Eckspurt</h1>
 
 					<p class="ml-auto">Turn {secondAttacks}</p>
 					<p>{secondScore}</p>

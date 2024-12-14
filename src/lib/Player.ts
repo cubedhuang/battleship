@@ -2,11 +2,22 @@ import { CellState } from './CellState';
 import type { Location } from './Location';
 import type { Ship } from './Ship';
 
-export enum HitResult {
+export enum HitResultType {
 	Miss,
 	Hit,
 	Sunk
 }
+
+type HitResultSunk = {
+	type: HitResultType.Sunk;
+	shipLocations: Location[];
+};
+
+type HitResultNotSunk = {
+	type: HitResultType.Hit | HitResultType.Miss;
+};
+
+export type HitResult = HitResultSunk | HitResultNotSunk;
 
 export abstract class Player {
 	private ships: Ship[] = [];
@@ -65,20 +76,24 @@ export abstract class Player {
 		return this.hits;
 	}
 
-	hit(location: Location) {
+	hit(location: Location): HitResult {
 		if (this.hits.some(hit => hit.equals(location))) {
 			console.warn('Already hit this location', location);
-			return this.hasShipAt(location) ? HitResult.Hit : HitResult.Miss;
+			return this.hasShipAt(location)
+				? { type: HitResultType.Hit }
+				: { type: HitResultType.Miss };
 		}
 
 		this.hits.push(location);
 
-		if (!this.hasShipAt(location)) return HitResult.Miss;
+		if (!this.hasShipAt(location)) return { type: HitResultType.Miss };
 
 		const ship = this.getShip(location)!;
 		ship.hit(location);
 
-		return ship.isSunk() ? HitResult.Sunk : HitResult.Hit;
+		return ship.isSunk()
+			? { type: HitResultType.Sunk, shipLocations: ship.getLocations() }
+			: { type: HitResultType.Hit };
 	}
 
 	wasHitAt(location: Location) {

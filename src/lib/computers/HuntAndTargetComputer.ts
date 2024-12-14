@@ -1,8 +1,7 @@
 import { ComputerPlayer } from './ComputerPlayer';
 import { CellState } from '../CellState';
 import { Location } from '../Location';
-import { HitResult, type Player } from '../Player';
-import { Orientation, SHIPS } from '../Ship';
+import { HitResultType, type Player } from '../Player';
 
 export class HuntAndTargetComputer extends ComputerPlayer {
 	private stack: Location[] = [];
@@ -16,11 +15,9 @@ export class HuntAndTargetComputer extends ComputerPlayer {
 		const result = player.hit(location);
 
 		this.guessBoard[location.row][location.col] =
-			result === HitResult.Hit || result === HitResult.Sunk
-				? CellState.Hit
-				: CellState.Miss;
+			result.type !== HitResultType.Miss ? CellState.Hit : CellState.Miss;
 
-		if (result) {
+		if (result.type !== HitResultType.Miss) {
 			const candidates = [
 				new Location(location.row - 1, location.col),
 				new Location(location.row + 1, location.col),
@@ -58,26 +55,5 @@ export class HuntAndTargetComputer extends ComputerPlayer {
 			locations[Math.floor(Math.random() * locations.length)];
 
 		return location;
-	}
-
-	placeShips() {
-		const ships = [...SHIPS];
-
-		for (const Ship of ships) {
-			while (true) {
-				const ship = new Ship(
-					this.getRandomLocation(),
-					Math.random() < 0.5
-						? Orientation.Horizontal
-						: Orientation.Vertical
-				);
-
-				if (this.canPlaceShip(ship)) {
-					this.addShip(ship);
-
-					break;
-				}
-			}
-		}
 	}
 }
