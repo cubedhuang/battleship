@@ -201,9 +201,11 @@
 									computer = new ComputerType();
 								}}
 							>
-								{Computer.name === 'ComputerPlayer'
-									? 'Random'
-									: Computer.name}
+								{Computer === ComputerPlayer
+									? 'Random Attacker'
+									: Computer === HuntAndTargetComputer
+									? 'Hunt and Target Algorithm'
+									: 'Eckspurt'}
 							</button>
 						{/each}
 					</div>
